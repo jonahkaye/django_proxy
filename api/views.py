@@ -10,7 +10,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 
 from .models import APIKey
-from .tasks import call__mock_inference_api, call__inference_api
+from .tasks import call__inference_api
 from .validation import validate_history
 
 import uuid
@@ -71,7 +71,9 @@ class InferenceProxyView(APIView):
 			return Response({"error": str(e)}, status=400)
 
 		# Forward request to the inference API
-		task_result = call__inference_api.delay(data).get()
+		task = call__inference_api.delay(data)
+
+		task_result = task.get()
 
 		# Return the response to the client
 		return Response(task_result["content"], status=task_result["status_code"])

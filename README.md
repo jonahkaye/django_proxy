@@ -48,12 +48,14 @@
 
 **RATE LIMITING:**
 - see UserRateThrottle in InferenceProxyView. Set at 100 RPM/user
-- see AnonRateThrottle in RegisterView. Set at 100 registrations per minute. Not really sure what this ought to be
+- see AnonRateThrottle in RegisterView. Set at 20 registrations per minute. Not really sure what this ought to be
 
 **ASYNC PROCESSING:**
 - Using celery. Normally, best to have same number of worker processes as CPU cores to limit context overhead switching. But because processes are I/O bound, using gevent makes more sense. Using guncicorn as production wsgi server. 
 
 - the way the task que is designed is that you configure how many asynchronous requests gevent can pass through to the api simaltaneously. That number can be 10 or 10000. I would experiment in more depth and understanding what the capacity of the inference endpoint is in order to determine what to set that number to. 
+
+- gunicorn is also using gevent. I realized by the end that I 
 
 
 **UNIT TESTING:**
@@ -79,7 +81,7 @@
 **Run things**
 
 * `cp .env.example .env` and add your API key
-* `cd genhealth; gunicorn genhealth.wsgi:application`
+* `cd genhealth; gunicorn genhealth.wsgi:application -k gevent --worker-connections 1000`
 * `python start_celery.py -A genhealth worker -P gevent -c 10 --loglevel=info`
 <!-- --pool=solo -->
 * `redis-server`

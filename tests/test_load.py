@@ -1,8 +1,9 @@
+import json
+import random
+
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from django.contrib.auth.models import User
-import json
-
 from api.models import APIKey
 from api.views import InferenceProxyView
 
@@ -140,6 +141,9 @@ class LoadTest(TestCase):
             "HTTP_X_API_KEY": str(api_key.key)  # Use the provided API key.
         }
 
+        # Randomly select a data bundle for the request
+        self.data = random.choice(data_bundles)
+
         request = self.factory.post(
             self.url, 
             data=json.dumps(self.data), 
@@ -149,6 +153,7 @@ class LoadTest(TestCase):
         response = InferenceProxyView.as_view()(request)
         return response
 
+    # synchronous testing
     def test_load(self):
         NUMBER_OF_REQUESTS_PER_USER = 1
 

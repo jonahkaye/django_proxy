@@ -7,3 +7,4 @@ django
 djangorestframework
 openai
 python-dotenv
+aiohttp
