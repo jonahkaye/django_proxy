@@ -6,3 +6,4 @@ gunicorn
 django
 djangorestframework
 openai
+python-dotenv

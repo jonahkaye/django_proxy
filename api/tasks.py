@@ -39,6 +39,7 @@ def call__inference_api(data):
         "status_code": response.status_code,
         "content": response.json()  # Assumes that the response from the endpoint is JSON formatted.
     }
+	logging.critical(result)
 	return result
 
 

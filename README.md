@@ -6,17 +6,17 @@
 - User Management x 
 - Request Validation x
 - Error Handling
-- Rate Limiting
+- Rate Limiting x
 - Asynch Processing x 
 - Unit testing x
 - env config x 
 
 **Good but less crucial:**
 - deployment
-- Scalability
-- Integration testing
 - Endpoint structure
 - Caching
+- Integration testing
+- Scalability
 
 **Not crucial:**
 - Endpoint versioning
@@ -24,43 +24,41 @@
 - documentation
 - code structure and design
 
-**My thinking is this:**
+### THINKING and IMPLEMENTATION:
 - security is most important. So that means auth, user management, and request val come first. Rate limiting is like on the border here with DDos. Env config is probably here too since poor handling of env variables is security issue.
 - the product achieving the objective minimally is the next most imporant. that means error handling, rate limiting, and asynch processing, which as I see it, make up the core of the proxy api
-- 
 
 
-**Here is how I handled each thing:**
-
-SECURITY:
+**SECURITY:**
 - HTTPS only. Middlewares.py ensures
 - I didn't encrypt the database at rest, but once in prod, just a click of a button to configure RDS to encrypt at rest with AWS KMS
 
-AUTHENTICATION and AUTHORIZATION:
+**AUTHENTICATION and AUTHORIZATION:**
 - Registration with username and password to get API key. 
 - 
 
-USER MANAGEMENT:
+**USER MANAGEMENT:**
 - see models.py
 
-REQUEST VALIDATION
+**REQUEST VALIDATION:**
 - see validation.py
 
-ERROR HANDLING
+**ERROR HANDLING:**
 - see views.py
 
-RATE LIMITING
+**RATE LIMITING:**
 - see UserRateThrottle in InferenceProxyView. Set at 100 RPM/user
 
-ASYNC PROCESSING
+**ASYNC PROCESSING:**
 - Using celery. Normally, best to have same number of worker processes as CPU cores to limit context overhead switching. But because processes are I/O bound, using gevent makes more sense. Using guncicorn as production wsgi server. 
 
-UNIT TESTING
+**UNIT TESTING:**
 - see tests folder
 
-ENV CONFIG
+**ENV CONFIG:**
 - .env file loading into settings.py. Very basic. 
 
+### RUNNING things:
 
 **Env setup**
 * `virtualenv venv`
@@ -72,6 +70,7 @@ ENV CONFIG
 
 **Run things**
 
+* `cp .env.example .env` and add your API key
 * `cd genhealth; gunicorn genhealth.wsgi:application`
 * `python start_celery.py -A genhealth worker -P gevent -c 10 --loglevel=info`
 <!-- --pool=solo -->
