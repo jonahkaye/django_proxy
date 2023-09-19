@@ -1,4 +1,4 @@
-/api/.env
+.env
 /api/mock_api.py
 
 db.sqlite3
