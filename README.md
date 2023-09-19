@@ -5,7 +5,7 @@
 - Authenticate and Authorize x 
 - User Management x 
 - Request Validation x
-- Error Handling
+- Error Handling x
 - Rate Limiting x
 - Asynch Processing x 
 - Unit testing x
@@ -13,9 +13,9 @@
 
 **Good but less crucial:**
 - deployment
-- Endpoint structure x 
+- Endpoint structure 
 - Caching
-- Integration testing
+- Integration testing (a little)
 - Scalability
 
 **Not crucial:**
@@ -51,12 +51,11 @@
 - see AnonRateThrottle in RegisterView. Set at 20 registrations per minute. Not really sure what this ought to be
 
 **ASYNC PROCESSING:**
-- Using celery. Normally, best to have same number of worker processes as CPU cores to limit context overhead switching. But because processes are I/O bound, using gevent makes more sense. Using guncicorn as production wsgi server. 
+- Using celery. Normally, best to have same number of worker processes as CPU cores to limit context overhead switching. But because processes are I/O bound, using gevent makes more sense. Using guncicorn as production wsgi server, which is also using gevent.
 
-- the way the task que is designed is that you configure how many asynchronous requests gevent can pass through to the api simaltaneously. That number can be 10 or 10000. I would experiment in more depth and understanding what the capacity of the inference endpoint is in order to determine what to set that number to. 
+- the way the task que is designed is that you configure how many asynchronous requests gevent can pass through to the api simaltaneously. That number can be 10 or 10000. I would experiment in more depth and understanding what the capacity of the inference endpoint is in order to determine what to set that number to.  
 
-- gunicorn is also using gevent. I realized by the end that I 
-
+- I think I realized that I was struggling slightly to understand the latency of the APi endpoint because obviously on the inference end caching has been implemented so it can handle high latency because its just hitting the cache. 
 
 **UNIT TESTING:**
 - see tests folder
@@ -90,4 +89,7 @@
 **Test things**
 * `./manage.py test`
 * `./manage.py test tests.test_rate_limit`
+* To test the async load handling you need to use an asynch request library and django doesnt support that within 
+its testing framekwork. So call:
+* `python test_que.py`
 
