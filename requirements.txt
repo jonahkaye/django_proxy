@@ -3,3 +3,6 @@ flower
 celery
 redis
 gunicorn
+django
+djangorestframework
+openai

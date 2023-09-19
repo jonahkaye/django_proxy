@@ -1,6 +1,8 @@
 # tasks.py
 import random
 import logging
+import requests
+
 from celery import shared_task
 
 
@@ -23,6 +25,14 @@ def call__mock_inference_api():
 	response = {"data": "finished task"}
 	logging.info(f"Finished task {call__mock_inference_api.request.id}")
 	return response
+
+
+@shared_task
+def call__inference_api():
+	headers = {
+		'Content-Type': 'application/json',
+		'Authorization': 'Token YOUR_TOKEN_HERE',
+	}
 
 
 
