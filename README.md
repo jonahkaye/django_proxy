@@ -1,6 +1,6 @@
-PRIORITIZATION:
+### PRIORITIZATION:
 
-Crucial: 
+**Crucial:**
 - Security x
 - Authenticate and Authorize x 
 - User Management x 
@@ -11,31 +11,26 @@ Crucial:
 - Unit testing x
 - env config x 
 
-Good but less crucial:
+**Good but less crucial:**
 - deployment
 - Scalability
 - Integration testing
 - Endpoint structure
 - Caching
 
-Not crucial :
+**Not crucial:**
 - Endpoint versioning
 - batch processing
 - documentation
 - code structure and design
 
-My thinking is this:
+**My thinking is this:**
 - security is most important. So that means auth, user management, and request val come first. Rate limiting is like on the border here with DDos. Env config is probably here too since poor handling of env variables is security issue.
 - the product achieving the objective minimally is the next most imporant. that means error handling, rate limiting, and asynch processing, which as I see it, make up the core of the proxy api
 - 
 
 
-
-Authentication and Authorization: They need to register and get an API key. Then using django rest DRF framework to auth in. 
-
-Scalability
-
-
+**Here is how I handled each thing:**
 
 SECURITY:
 - HTTPS only. Middlewares.py ensures
@@ -67,12 +62,23 @@ ENV CONFIG
 - .env file loading into settings.py. Very basic. 
 
 
-COMMANDS:
+**Env setup**
 * `virtualenv venv`
 * `source venv/bin/activate`
 * `pip install -r requirements.txt`
+* `cd genhealth`
+* `python manage.py makemigrations`
+* `python manage.py migrate`
+
+**Run things**
+
 * `cd genhealth; gunicorn genhealth.wsgi:application`
 * `python start_celery.py -A genhealth worker -P gevent -c 10 --loglevel=info`
 <!-- --pool=solo -->
 * `redis-server`
 * `monitor celery tasks with flower: celery -A genhealth flower`
+
+**Test things**
+* `./manage.py test`
+* `./manage.py test tests.test_rate_limit`
+
