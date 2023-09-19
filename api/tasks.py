@@ -2,11 +2,10 @@
 import random
 import logging
 import requests
+from django.conf import settings
 
 from celery import shared_task
 
-
-from .mock_api import AzureWrapper
 
 @shared_task
 def call__mock_inference_api():
@@ -28,11 +27,19 @@ def call__mock_inference_api():
 
 
 @shared_task
-def call__inference_api():
+def call__inference_api(data):
+	logging.info(f"Starting task {call__inference_api.request.id}")
 	headers = {
 		'Content-Type': 'application/json',
-		'Authorization': 'Token YOUR_TOKEN_HERE',
+		'Authorization': f'Token {settings.GEN_HEALTH_KEY}',
 	}
+	logging.info(f"Finished task {call__inference_api.request.id}")
+	response = requests.post('https://api.genhealth.ai/predict', headers=headers, json=data)
+	result = {
+        "status_code": response.status_code,
+        "content": response.json()  # Assumes that the response from the endpoint is JSON formatted.
+    }
+	return result
 
 
 

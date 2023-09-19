@@ -9,7 +9,7 @@ Crucial:
 - Rate Limiting
 - Asynch Processing x 
 - Unit testing x
-- env config 
+- env config x 
 
 Good but less crucial:
 - deployment
@@ -62,6 +62,9 @@ ASYNC PROCESSING
 
 UNIT TESTING
 - see tests folder
+
+ENV CONFIG
+- .env file loading into settings.py. Very basic. 
 
 
 COMMANDS:

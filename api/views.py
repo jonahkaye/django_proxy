@@ -10,15 +10,15 @@ from .models import APIKey
 
 import uuid
 
-from .tasks import call__mock_inference_api
+from .tasks import call__mock_inference_api, call__inference_api
 from .validation import validate_history
 
 def is_valid_uuid(val):
-    try:
-        uuid.UUID(str(val))
-        return True
-    except ValueError:
-        return False
+	try:
+		uuid.UUID(str(val))
+		return True
+	except ValueError:
+		return False
 
 class RegisterView(APIView):
 
@@ -68,7 +68,7 @@ class InferenceProxyView(APIView):
 			return Response({"error": str(e)}, status=400)
 
 		# Forward request to the inference API
-		task = call__mock_inference_api.delay().get()
+		task_result = call__inference_api.delay(data).get()
 
 		# Return the response to the client
-		return Response(task)
+		return Response(task_result["content"], status=task_result["status_code"])

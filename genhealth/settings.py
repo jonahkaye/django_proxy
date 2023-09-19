@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import logging
+from dotenv import load_dotenv
 from pathlib import Path
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-6zrmfnj&(ph=8yyg_(v@^@a_u4kfb0xa99d1#jm8t3%*u5!p&=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-GEN_HEALTH_KEY = os.environ.get('GEN_HEALTH_API', '')
+GEN_HEALTH_KEY = os.getenv('GEN_HEALTH_API', '')
 
 # Application definition
 
