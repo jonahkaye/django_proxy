@@ -30,7 +30,7 @@
 
 
 **SECURITY:**
-- HTTPS only. Middlewares.py ensures
+- Ideally should be HTTPS only. Middlewares.py enforces that. I got annoyed with using ngrok as a https proxy and so I commented out the middleware in settings.py, but as soon as you moved to prod you would obviously only be sending over https.
 - I didn't encrypt the database at rest, but once in prod, just a click of a button to configure RDS to encrypt at rest with AWS KMS
 
 **AUTHENTICATION and AUTHORIZATION:**
