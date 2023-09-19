@@ -141,8 +141,10 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'user': '100/min',
+		'anon': '20/min',
     },
 }

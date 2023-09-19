@@ -1,17 +1,19 @@
 from django.shortcuts import render
+from django.contrib.auth.models import User
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.throttling import UserRateThrottle
-from django.contrib.auth.models import User
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+
+
 from .models import APIKey
-
-import uuid
-
 from .tasks import call__mock_inference_api, call__inference_api
 from .validation import validate_history
+
+import uuid
 
 def is_valid_uuid(val):
 	try:
@@ -21,10 +23,12 @@ def is_valid_uuid(val):
 		return False
 
 class RegisterView(APIView):
-
+	throttle_classes = [AnonRateThrottle]
 	def post(self, request):
 		username = request.data.get('username')
 		password = request.data.get('password')
+		if not username or not password:
+			return Response({'error': 'Username and password are required'}, status=400)
 
 		# Check if the username already exists
 		if User.objects.filter(username=username).exists():
@@ -39,10 +43,10 @@ class APIKeyAuthentication(BaseAuthentication):
 
 	def authenticate(self, request):
 		api_key = request.headers.get('X-API-KEY')
-		if not is_valid_uuid(api_key):
-			raise AuthenticationFailed('Invalid API key')
 		if not api_key:
 			return AuthenticationFailed('No API key')
+		if not is_valid_uuid(api_key):
+			raise AuthenticationFailed('Invalid API key')
 		try:
 			key = APIKey.objects.get(key=api_key)
 		except APIKey.DoesNotExist:
@@ -54,7 +58,6 @@ class InferenceProxyView(APIView):
 	authentication_classes = [APIKeyAuthentication] # Who is making this request?
 	permission_classes = [IsAuthenticated] # Does the identified user have the right to do what they're asking?
 	throttle_classes = [UserRateThrottle]
-
 
 	def post(self, request):
 		# Extract data from the incoming request

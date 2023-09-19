@@ -13,7 +13,7 @@
 
 **Good but less crucial:**
 - deployment
-- Endpoint structure
+- Endpoint structure x 
 - Caching
 - Integration testing
 - Scalability
@@ -48,15 +48,23 @@
 
 **RATE LIMITING:**
 - see UserRateThrottle in InferenceProxyView. Set at 100 RPM/user
+- see AnonRateThrottle in RegisterView. Set at 100 registrations per minute. Not really sure what this ought to be
 
 **ASYNC PROCESSING:**
 - Using celery. Normally, best to have same number of worker processes as CPU cores to limit context overhead switching. But because processes are I/O bound, using gevent makes more sense. Using guncicorn as production wsgi server. 
+
+- the way the task que is designed is that you configure how many asynchronous requests gevent can pass through to the api simaltaneously. That number can be 10 or 10000. I would experiment in more depth and understanding what the capacity of the inference endpoint is in order to determine what to set that number to. 
+
 
 **UNIT TESTING:**
 - see tests folder
 
 **ENV CONFIG:**
 - .env file loading into settings.py. Very basic. 
+
+
+**ENDPOINT STRUCTURE:**
+- uses django rest framework. stateless, 
 
 ### RUNNING things:
 
